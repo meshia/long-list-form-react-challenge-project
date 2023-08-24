@@ -28,37 +28,30 @@ const UserRow = ({ user={}, updateUser=(user)=>{}}) => {
 
   const handleChange = (name, value) => {
     setCurrentUser({...currentUser, [name]: value})
+    let currentError = value.length === 0 ? "field is empty" : false;
     switch(name) {
       case 'name':
-        if (!value || value.length === 0 || /[^a-zA-Z ]/.test(value)) {
-          setErrors({...errors, [name]: true});
-          console.log("value", value, value.length, !value,errors )
-        } else {
-          setErrors({...errors, [name]: false});
+        if (/[^a-zA-Z ]/.test(value)) {
+          currentError = "invalid name";
         }
         break;
       case 'country':
-        if (!value || value.length <= 0 || countryOptions.indexOf(value) === -1) {
-          setErrors({...errors, [name]: true});
-        } else {
-          setErrors({...errors, [name]: false});
+        if (countryOptions.indexOf(value) === -1) {
+          currentError = "invalid country name";
         }
         break;
       case 'email':
-        if (!value || value.length <= 0 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          setErrors({...errors, [name]: true});
-        } else {
-          setErrors({...errors, [name]: false});
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          currentError = "invalid email address";
         }
         break;
       case 'phone':
-        if (!value || value.length <= 0 || !value?.match(/\+/g) || value?.match(/\+/g).length > 1) {
-          setErrors({...errors, [name]: true});
-        } else {
-          setErrors({...errors, [name]: false});
+        if (!value?.match(/\+/g) || value?.match(/\+/g).length > 1) {
+          currentError = "invalid phone number";
         }
         break;
     }
+    setErrors({...errors, [name]: currentError});
   }
 
   return (
@@ -66,8 +59,9 @@ const UserRow = ({ user={}, updateUser=(user)=>{}}) => {
       {currentUser && Object.keys(currentUser).map((key)=>{
         if(key !== 'id') {
           return (
-          <Grid key={key} item xs={key === 'email' ? 3 : 2}>
-            <InputField name={key} error={ errors[key] } value={ currentUser[key] } onChangehandler={handleChange}/>
+          <Grid key={key} className={styles.userFieldWrapper} item xs={key === 'email' ? 3 : 2}>
+            <InputField name={key} error={ errors[key] ? true : false } value={ currentUser[key] } onChangehandler={handleChange}/>
+            <span className={styles.errorNote}>{errors[key]}</span>
           </Grid>
           )
         }
