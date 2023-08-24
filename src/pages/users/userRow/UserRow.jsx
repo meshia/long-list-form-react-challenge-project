@@ -30,28 +30,29 @@ const UserRow = ({ user={}, updateUser=(user)=>{}}) => {
     setCurrentUser({...currentUser, [name]: value})
     switch(name) {
       case 'name':
-        if (!value || /[^a-zA-Z ]/.test(value)) {
+        if (!value || value.length === 0 || /[^a-zA-Z ]/.test(value)) {
           setErrors({...errors, [name]: true});
+          console.log("value", value, value.length, !value,errors )
         } else {
           setErrors({...errors, [name]: false});
         }
         break;
       case 'country':
-        if (!value || countryOptions.indexOf(value) === -1) {
+        if (!value || value.length <= 0 || countryOptions.indexOf(value) === -1) {
           setErrors({...errors, [name]: true});
         } else {
           setErrors({...errors, [name]: false});
         }
         break;
       case 'email':
-        if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (!value || value.length <= 0 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
           setErrors({...errors, [name]: true});
         } else {
           setErrors({...errors, [name]: false});
         }
         break;
       case 'phone':
-        if (!value || !value?.match(/\+/g) || value?.match(/\+/g).length > 1) {
+        if (!value || value.length <= 0 || !value?.match(/\+/g) || value?.match(/\+/g).length > 1) {
           setErrors({...errors, [name]: true});
         } else {
           setErrors({...errors, [name]: false});
@@ -60,14 +61,13 @@ const UserRow = ({ user={}, updateUser=(user)=>{}}) => {
     }
   }
 
-
   return (
     <Grid container className={styles.userRow}>
       {currentUser && Object.keys(currentUser).map((key)=>{
         if(key !== 'id') {
           return (
           <Grid key={key} item xs={key === 'email' ? 3 : 2}>
-            <InputField name={key} error={!currentUser[key] ? true : errors[key]} value={currentUser[key]} onChangehandler={handleChange}/>
+            <InputField name={key} error={ errors[key] } value={ currentUser[key] } onChangehandler={handleChange}/>
           </Grid>
           )
         }

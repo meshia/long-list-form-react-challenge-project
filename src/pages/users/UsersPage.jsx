@@ -2,7 +2,7 @@ import UsersList from './usersList/UsersList';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useUsersContext } from '../../context/usersContext';
 import styles from './users.module.css';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 function UsersPage() {
   const { setUsersData, listError } = useUsersContext(true);
@@ -10,7 +10,6 @@ function UsersPage() {
 
   const handleSave = () => {
     const childData = actionRef.current.getUsers();
-    console.log("childData", childData)
     setUsersData(childData)
   }
 
