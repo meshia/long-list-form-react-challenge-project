@@ -20,6 +20,8 @@
 
 .rightButtonContainer {
   margin-left: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .usersList {

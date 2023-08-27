@@ -8,9 +8,14 @@ import { useEffect, useRef, useState } from 'react';
 function UsersPage() {
   const { setUsersData, listError } = useUsersContext({});
   const [ displaySaveButton, setDisplaySaveButton ] = useState(false);
+  const [ displaySavedMessage, setDisplaySavedMessage ] = useState(false);
   const actionRef = useRef();
 
   const handleSave = () => {
+    setDisplaySavedMessage(true);
+    const displayMessage = setTimeout(() => {
+      setDisplaySavedMessage(false);
+    }, 1000)
     const childData = actionRef.current.getUsers();
     setUsersData(childData)
   }
@@ -27,9 +32,9 @@ function UsersPage() {
     <div className={styles.pageRoot}>
       <div className={styles.pageContentContainer}>
         <UsersList ref={actionRef}/>
-        {displaySaveButton && 
+        { displaySaveButton && 
             <ErrorsCountDisplay errors={listError} />
-          }
+        }
         <div className={styles.rightButtonContainer}>
           <PrimaryButton
             disabled={displaySaveButton}
@@ -37,6 +42,9 @@ function UsersPage() {
           >
             Save
           </PrimaryButton>
+          { displaySavedMessage &&
+            <span>Users Saved!</span>
+          }
         </div>
       </div>
     </div>
