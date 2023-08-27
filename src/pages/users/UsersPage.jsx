@@ -2,10 +2,11 @@ import UsersList from './usersList/UsersList';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useUsersContext } from '../../context/usersContext';
 import styles from './users.module.css';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function UsersPage() {
-  const { setUsersData, listError } = useUsersContext(true);
+  const { setUsersData, listError } = useUsersContext({});
+  const [ displaySaveButton, setDisplaySaveButton ] = useState(false);
   const actionRef = useRef();
 
   const handleSave = () => {
@@ -13,13 +14,22 @@ function UsersPage() {
     setUsersData(childData)
   }
 
+  useEffect(() => {
+    console.log("listError", listError, Object.keys(listError).length)
+    if(Object.keys(listError).length > 0) {
+      setDisplaySaveButton(true);
+    } else {
+      setDisplaySaveButton(false);
+    }
+  },[ listError ])
+
   return (
     <div className={styles.pageRoot}>
       <div className={styles.pageContentContainer}>
         <UsersList ref={actionRef}/>
         <div className={styles.rightButtonContainer}>
           <PrimaryButton
-            disabled={listError}
+            disabled={displaySaveButton}
             handleClick={handleSave}
           >
             Save

@@ -5,7 +5,7 @@ import data from '../data/initialUsersData.json';
 const UsersContext = createContext({
   usersData: [],
   setUsersData: () => {},
-  listError: [],
+  listError: {},
   setListError: () => {},
   loading: false,
 });
@@ -14,9 +14,7 @@ const UsersContext = createContext({
 export const ContextProvider = ({ children }) => {
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [listError, setListError] = useState(false);
-
-  console.log('usersData', usersData);
+  const [listError, setListError] = useState({});
 
   useEffect(() => {
     const t = setTimeout(() => {

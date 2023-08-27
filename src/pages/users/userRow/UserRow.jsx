@@ -11,47 +11,64 @@ import countryOptions from '../../../data/countries.json';
 const UserRow = ({ user={}, updateUser=(user)=>{}}) => {
   const [currentUser, setCurrentUser] = useState({});
   const [errors, setErrors] = useState({});
-  const { setListError } = useUsersContext();
+  const { setListError, listError } = useUsersContext();
 
   useEffect(()=> {
     setCurrentUser(user)
   }, [user]);
 
   useEffect(()=> {
-    if(Object.values(errors).indexOf(true) === -1) {
-      setListError(false);
-      updateUser(currentUser, "update");
+    if(Object.keys(errors).length) {
+      if(currentUser.id) {
+        setListError({...listError, [currentUser.id]: errors});
+      }
     } else {
-      setListError(true);
+      setListError(prev => {
+        const copy = {...prev};
+        delete copy[currentUser.id];
+        return copy
+      });
     }
+    updateUser(currentUser, "update");
   }, [errors]);
 
   const handleChange = (name, value) => {
     setCurrentUser({...currentUser, [name]: value})
     let currentError = value.length === 0 ? "field is empty" : false;
-    switch(name) {
-      case 'name':
-        if (/[^a-zA-Z ]/.test(value)) {
-          currentError = "invalid name";
-        }
-        break;
-      case 'country':
-        if (countryOptions.indexOf(value) === -1) {
-          currentError = "invalid country name";
-        }
-        break;
-      case 'email':
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          currentError = "invalid email address";
-        }
-        break;
-      case 'phone':
-        if (!value?.match(/\+/g) || value?.match(/\+/g).length > 1) {
-          currentError = "invalid phone number";
-        }
-        break;
+    if(!currentError) {
+      switch(name) {
+        case 'name':
+          if (/[^a-zA-Z ]/.test(value)) {
+            currentError = "invalid name";
+          }
+          break;
+        case 'country':
+          if (countryOptions.indexOf(value) === -1) {
+            currentError = "invalid country name";
+          }
+          break;
+        case 'email':
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            currentError = "invalid email address";
+          }
+          break;
+        case 'phone':
+          if (!value?.match(/\+/g) || value?.match(/\+/g).length > 1) {
+            currentError = "invalid phone number";
+          }
+          break;
+      }
     }
-    setErrors({...errors, [name]: currentError});
+
+    if (currentError === false) {
+      setErrors(prev => {
+        const copy = {...prev};
+        delete copy[name];
+        return copy
+      });
+    } else {
+      setErrors({...errors, [name]: currentError});
+    }
   }
 
   return (
